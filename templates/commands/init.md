@@ -28,17 +28,41 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 This command initializes the DevSquad Spec-Driven Development structure in the current project. It creates the `.ds/` directory with all templates, scripts, and memory needed for the SDD workflow.
 
-1. **Run the init script**: Execute `{SCRIPT}` from the repo root and parse JSON output for TARGET, DS_DIR, and counts.
+### Laravel Detection
+
+The init script automatically detects Laravel projects:
+
+- **Laravel project detected** (composer.json has `laravel/framework`):
+  - **Requires `laravel/boost`** — if not installed, the script will stop and ask the user to install it first (`composer require laravel/boost --dev && php artisan boost:install`)
+  - Command templates are installed as **Laravel Boost skills** in `.ai/skills/ds-*/SKILL.md` following the [Boost skills format](https://laravel.com/docs/boost)
+  - Document templates, scripts, and memory still go in `.ds/`
+
+- **Non-Laravel project**:
+  - Everything goes in `.ds/` (templates, commands, scripts, memory)
+
+### Execution
+
+1. **Run the init script**: Execute `{SCRIPT}` from the repo root and parse JSON output for TARGET, DS_DIR, IS_LARAVEL, and counts.
 
    **IMPORTANT**: This script should only run once per project. If `.ds/` already exists, it will error — inform the user and suggest checking the existing setup.
 
 2. **Report what was created**:
+
+   **For Laravel + Boost projects:**
+   - `.ai/skills/ds-*/` — command skills in Boost format (auto-discovered by Boost)
    - `.ds/templates/` — document templates (spec, plan, tasks, constitution, checklist, agent-file)
-   - `.ds/templates/commands/` — command prompt templates (init, constitution, specify, clarify, checklist, plan, tasks, implement)
    - `.ds/scripts/bash/` — shell scripts for branch creation, prerequisites, plan setup
    - `.ds/memory/constitution.md` — project constitution (copied from template, ready to fill)
    - `specs/` — directory where feature specs will live
 
+   **For non-Laravel projects:**
+   - `.ds/templates/commands/` — command prompt templates
+   - `.ds/templates/` — document templates
+   - `.ds/scripts/bash/` — shell scripts
+   - `.ds/memory/constitution.md` — project constitution
+   - `specs/` — directory where feature specs will live
+
 3. **Suggest next steps**:
+   - For Laravel: run `php artisan boost:update` to register the new skills
    - Run `/ds.constitution` to define the project's non-negotiable principles
    - Then use `/ds.specify <JIRA-CODE>` to create the first feature spec from a Jira issue

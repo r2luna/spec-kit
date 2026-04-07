@@ -34,7 +34,11 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 2. **Load context**: Read FEATURE_SPEC and `/memory/constitution.md`. Load IMPL_PLAN template (already copied).
 
-3. **Execute plan workflow**: Follow the structure in IMPL_PLAN template to:
+3. **Laravel detection**: Check if `composer.json` exists at the project root with `laravel/framework` as a dependency.
+   - **If Laravel project**: You MUST activate the `laravel-best-practices` skill (installed by Laravel Boost) before making any architectural or technical decisions. All design choices — routing, models, controllers, services, middleware, validation, testing, queues, events, database migrations — MUST follow the official Laravel conventions as defined in that skill. Do not deviate from Laravel patterns unless the constitution explicitly overrides them.
+   - This applies to all phases below (research, data model, contracts, and technical context).
+
+4. **Execute plan workflow**: Follow the structure in IMPL_PLAN template to:
    - Fill Technical Context (mark unknowns as "NEEDS CLARIFICATION")
    - Fill Constitution Check section from constitution
    - Evaluate gates (ERROR if violations unjustified)
@@ -42,7 +46,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Phase 1: Generate data-model.md, contracts/, quickstart.md
    - Re-evaluate Constitution Check post-design
 
-4. **Stop and report**: Command ends after Phase 2 planning. Report branch, IMPL_PLAN path, and generated artifacts.
+5. **Stop and report**: Command ends after Phase 2 planning. Report branch, IMPL_PLAN path, and generated artifacts.
 
 ## Phases
 
@@ -67,6 +71,8 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Rationale: [why chosen]
    - Alternatives considered: [what else evaluated]
 
+**Laravel projects**: When resolving technology choices, always prefer Laravel's built-in solutions (Eloquent, Blade/Livewire, queues, events, notifications, policies, form requests, etc.) over third-party alternatives unless the constitution or spec explicitly requires otherwise. Reference the `laravel-best-practices` skill for the canonical patterns.
+
 **Output**: research.md with all NEEDS CLARIFICATION resolved
 
 ### Phase 1: Design & Contracts
@@ -83,6 +89,8 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Document the contract format appropriate for the project type
    - Examples: public APIs for libraries, command schemas for CLI tools, endpoints for web services, grammars for parsers, UI contracts for applications
    - Skip if project is purely internal (build scripts, one-off tools, etc.)
+
+**Laravel projects**: Data models MUST use Eloquent conventions (fillable/guarded, casts, relationships, scopes). Contracts MUST follow Laravel's route/controller patterns (API resources, form requests, middleware). Use migrations for schema, factories and seeders for test data.
 
 **Output**: data-model.md, /contracts/*, quickstart.md
 

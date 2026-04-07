@@ -74,9 +74,27 @@ Running `/ds.init` creates this structure in your project:
 specs/                         # Feature specs live here
 ```
 
+## Laravel Projects
+
+For Laravel projects, `ds init` **requires [Laravel Boost](https://laravel.com/docs/boost)** and installs commands as Boost skills:
+
+```bash
+# 1. Install Laravel Boost first
+composer require laravel/boost --dev
+php artisan boost:install
+
+# 2. Then init DevSquad SDD
+uvx --from git+https://github.com/elitedevsquad/spec-kit.git ds init
+
+# 3. Register the new skills
+php artisan boost:update
+```
+
+Commands are installed as `.ai/skills/ds-*/SKILL.md` — Boost auto-discovers them and makes them available to all AI agents in the project.
+
 ## How to Use
 
-1. **Initialize**: Run `uvx --from git+https://github.com/devsquad/spec-kit.git ds init` in your project root. This creates the `.ds/` directory with everything you need. (Requires Python 3.10+ and [uv](https://docs.astral.sh/uv/))
+1. **Initialize**: Run `uvx --from git+https://github.com/elitedevsquad/spec-kit.git ds init` in your project root. (Requires Python 3.10+ and [uv](https://docs.astral.sh/uv/))
 
 2. **Create a constitution**: Run `/ds.constitution` to define your project's non-negotiable principles.
 
