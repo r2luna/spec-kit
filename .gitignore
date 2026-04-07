@@ -6,6 +6,14 @@
 .DS_Store
 *.tmp
 
+# Python
+__pycache__/
+*.pyc
+.venv/
+dist/
+*.egg-info/
+uv.lock
+
 # Environment
 .env
 .env.local

@@ -12,7 +12,13 @@ A template repository for **Spec-Driven Development (SDD)**: a structured workfl
 
 ## Quick Start
 
-Run `/ds.init` in your project to set up the `.ds/` directory with all templates, scripts, and memory. Then follow the workflow below.
+Initialize in any project — no install required:
+
+```bash
+uvx --from git+https://github.com/elitedevsquad/spec-kit.git ds init
+```
+
+This creates the `.ds/` directory with all templates, scripts, and memory. Then follow the workflow below.
 
 ## The Workflow
 
@@ -70,7 +76,7 @@ specs/                         # Feature specs live here
 
 ## How to Use
 
-1. **Initialize**: Run `/ds.init` in your project root. This creates the `.ds/` directory with everything you need.
+1. **Initialize**: Run `uvx --from git+https://github.com/devsquad/spec-kit.git ds init` in your project root. This creates the `.ds/` directory with everything you need. (Requires Python 3.10+ and [uv](https://docs.astral.sh/uv/))
 
 2. **Create a constitution**: Run `/ds.constitution` to define your project's non-negotiable principles.
 
