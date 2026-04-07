@@ -2,9 +2,17 @@
 description: Create or update the project constitution from interactive or provided principle inputs, ensuring all dependent templates stay in sync.
 handoffs:
   - label: Build Specification
-    agent: speckit.specify
+    agent: ds.specify
     prompt: Implement the feature specification based on the updated constitution. I want to build...
 ---
+
+<!--
+  DevSquad Spec-Driven Development Toolkit
+  https://devsquad.com
+
+  Built and maintained by DevSquad.
+  Licensed under MIT. See LICENSE for details.
+-->
 
 ## User Input
 

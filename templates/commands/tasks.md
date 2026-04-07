@@ -2,12 +2,20 @@
 description: Generate an actionable, dependency-ordered tasks.md for the feature based on available design artifacts.
 handoffs:
   - label: Implement Project
-    agent: speckit.implement
+    agent: ds.implement
     prompt: Start the implementation in phases
     send: true
 scripts:
   sh: scripts/bash/check-prerequisites.sh --json
 ---
+
+<!--
+  DevSquad Spec-Driven Development Toolkit
+  https://devsquad.com
+
+  Built and maintained by DevSquad.
+  Licensed under MIT. See LICENSE for details.
+-->
 
 ## User Input
 

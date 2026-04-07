@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# =============================================================================
+# DevSquad Spec-Driven Development Toolkit
+# https://devsquad.com
+#
+# Built and maintained by DevSquad.
+# Licensed under MIT. See LICENSE for details.
+# =============================================================================
+
 # Common functions and variables for all scripts
 
 # Find repository root by searching upward for .specify directory

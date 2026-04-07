@@ -4,6 +4,14 @@ scripts:
   sh: scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
 ---
 
+<!--
+  DevSquad Spec-Driven Development Toolkit
+  https://devsquad.com
+
+  Built and maintained by DevSquad.
+  Licensed under MIT. See LICENSE for details.
+-->
+
 ## User Input
 
 ```text
@@ -103,4 +111,4 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Confirm the implementation follows the technical plan
    - Report final status with summary of completed work
 
-Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit.tasks` first to regenerate the task list.
+Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/ds.tasks` first to regenerate the task list.

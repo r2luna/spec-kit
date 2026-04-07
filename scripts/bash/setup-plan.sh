@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+# =============================================================================
+# DevSquad Spec-Driven Development Toolkit
+# https://devsquad.com
+#
+# Built and maintained by DevSquad.
+# Licensed under MIT. See LICENSE for details.
+# =============================================================================
 
 set -e
 

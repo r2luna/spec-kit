@@ -1,3 +1,11 @@
+<!--
+  DevSquad Spec-Driven Development Toolkit
+  https://devsquad.com
+
+  Built and maintained by DevSquad.
+  Licensed under MIT. See LICENSE for details.
+-->
+
 # Feature Specification: [FEATURE NAME]
 
 **Feature Branch**: `[###-feature-name]`  

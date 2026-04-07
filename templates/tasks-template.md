@@ -3,6 +3,14 @@
 description: "Task list template for feature implementation"
 ---
 
+<!--
+  DevSquad Spec-Driven Development Toolkit
+  https://devsquad.com
+
+  Built and maintained by DevSquad.
+  Licensed under MIT. See LICENSE for details.
+-->
+
 # Tasks: [FEATURE NAME]
 
 **Input**: Design documents from `/specs/[###-feature-name]/`
@@ -29,7 +37,7 @@ description: "Task list template for feature implementation"
   ============================================================================
   IMPORTANT: The tasks below are SAMPLE TASKS for illustration purposes only.
   
-  The /speckit.tasks command MUST replace these with actual tasks based on:
+  The /ds.tasks command MUST replace these with actual tasks based on:
   - User stories from spec.md (with their priorities P1, P2, P3...)
   - Feature requirements from plan.md
   - Entities from data-model.md

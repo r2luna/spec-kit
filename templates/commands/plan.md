@@ -2,15 +2,23 @@
 description: Execute the implementation planning workflow using the plan template to generate design artifacts.
 handoffs:
   - label: Create Tasks
-    agent: speckit.tasks
+    agent: ds.tasks
     prompt: Break the plan into tasks
     send: true
   - label: Create Checklist
-    agent: speckit.checklist
+    agent: ds.checklist
     prompt: Create a checklist for the following domain...
 scripts:
   sh: scripts/bash/setup-plan.sh --json
 ---
+
+<!--
+  DevSquad Spec-Driven Development Toolkit
+  https://devsquad.com
+
+  Built and maintained by DevSquad.
+  Licensed under MIT. See LICENSE for details.
+-->
 
 ## User Input
 

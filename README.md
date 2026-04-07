@@ -1,3 +1,11 @@
+<!--
+  DevSquad Spec-Driven Development Toolkit
+  https://devsquad.com
+
+  Built and maintained by DevSquad.
+  Licensed under MIT. See LICENSE for details.
+-->
+
 # Spec Kit — Template Repository
 
 A template repository for **Spec-Driven Development (SDD)**: a structured workflow where specifications drive implementation, not the other way around.

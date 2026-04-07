@@ -2,15 +2,23 @@
 description: Create or update the feature specification from a Jira issue, pulling all context via MCP and creating a gitflow-compliant branch.
 handoffs:
   - label: Build Technical Plan
-    agent: speckit.plan
+    agent: ds.plan
     prompt: Create a plan for the spec. I am building with...
   - label: Clarify Spec Requirements
-    agent: speckit.clarify
+    agent: ds.clarify
     prompt: Clarify specification requirements
     send: true
 scripts:
   sh: scripts/bash/create-new-feature.sh "{ARGS}"
 ---
+
+<!--
+  DevSquad Spec-Driven Development Toolkit
+  https://devsquad.com
+
+  Built and maintained by DevSquad.
+  Licensed under MIT. See LICENSE for details.
+-->
 
 ## User Input
 
@@ -177,7 +185,7 @@ Given the Jira issue code, do this:
    - Branch name (gitflow format)
    - Spec file path
    - Validation results
-   - Readiness for the next phase (`/speckit.clarify` or `/speckit.plan`)
+   - Readiness for the next phase (`/ds.clarify` or `/ds.plan`)
 
 **NOTE:** The script creates and checks out the new branch and initializes the spec file before writing.
 
