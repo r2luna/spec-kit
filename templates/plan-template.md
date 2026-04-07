@@ -11,7 +11,7 @@
 **Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
-**Note**: This template is filled in by the `/ds.plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
+**Note**: This template is filled in by the `/ds.plan` command. See `.ds/templates/plan-template.md` for the execution workflow.
 
 ## Summary
 

@@ -6,23 +6,26 @@
   Licensed under MIT. See LICENSE for details.
 -->
 
-# Spec Kit — Template Repository
+# DevSquad SDD Toolkit
 
 A template repository for **Spec-Driven Development (SDD)**: a structured workflow where specifications drive implementation, not the other way around.
 
-Copy the `.specify/` structure into any project to get a repeatable, AI-friendly development workflow built around seven commands: **constitution, specify, clarify, checklist, plan, tasks, implement**.
+## Quick Start
+
+Run `/ds.init` in your project to set up the `.ds/` directory with all templates, scripts, and memory. Then follow the workflow below.
 
 ## The Workflow
 
 ```
-constitution → specify → clarify → plan → tasks → implement
-                           ↑         ↓
-                           └── checklist
+init → constitution → specify → clarify → plan → tasks → implement
+                                   ↑         ↓
+                                   └── checklist
 ```
 
 | Command | Purpose | Output |
 |---------|---------|--------|
-| `constitution` | Define project principles and constraints | `memory/constitution.md` |
+| `init` | Set up the `.ds/` structure in your project | `.ds/` directory |
+| `constitution` | Define project principles and constraints | `.ds/memory/constitution.md` |
 | `specify` | Pull a Jira issue and generate a structured spec | `specs/<feature>/spec.md` |
 | `clarify` | Reduce ambiguity in the spec via targeted questions | Updated `spec.md` |
 | `plan` | Design the implementation (architecture & decisions) | `specs/<feature>/plan.md` + artifacts |
@@ -30,47 +33,56 @@ constitution → specify → clarify → plan → tasks → implement
 | `tasks` | Break the plan into ordered, executable tasks | `specs/<feature>/tasks.md` |
 | `implement` | Execute tasks phase by phase | Working code |
 
-## What's Inside
+## What Gets Installed
+
+Running `/ds.init` creates this structure in your project:
 
 ```
-templates/
-├── commands/              # The 7 SDD command prompts
-│   ├── constitution.md
-│   ├── specify.md
-│   ├── clarify.md
-│   ├── checklist.md
-│   ├── plan.md
-│   ├── tasks.md
-│   └── implement.md
-├── constitution-template.md   # Project principles template
-├── spec-template.md           # Feature specification template
-├── plan-template.md           # Implementation plan template
-├── tasks-template.md          # Task breakdown template
-└── agent-file-template.md     # AI agent guidelines template
+.ds/
+├── templates/
+│   ├── commands/              # The 8 SDD command prompts
+│   │   ├── init.md
+│   │   ├── constitution.md
+│   │   ├── specify.md
+│   │   ├── clarify.md
+│   │   ├── checklist.md
+│   │   ├── plan.md
+│   │   ├── tasks.md
+│   │   └── implement.md
+│   ├── constitution-template.md
+│   ├── spec-template.md
+│   ├── plan-template.md
+│   ├── tasks-template.md
+│   ├── checklist-template.md
+│   └── agent-file-template.md
+├── scripts/bash/
+│   ├── init.sh
+│   ├── create-new-feature.sh
+│   ├── setup-plan.sh
+│   ├── check-prerequisites.sh
+│   ├── update-agent-context.sh
+│   └── common.sh
+└── memory/
+    └── constitution.md        # Ready to configure
 
-scripts/bash/
-├── create-new-feature.sh      # Scaffold new feature directories
-├── setup-plan.sh              # Initialize plan workspace
-├── check-prerequisites.sh     # Verify required docs exist
-├── update-agent-context.sh    # Update agent context file
-└── common.sh                  # Shared utilities
-
-spec-driven.md                 # End-to-end SDD workflow guide
+specs/                         # Feature specs live here
 ```
 
 ## How to Use
 
-1. **Copy into your project**: Copy the `templates/` and `scripts/` directories into your project's `.specify/` directory.
+1. **Initialize**: Run `/ds.init` in your project root. This creates the `.ds/` directory with everything you need.
 
-2. **Create a constitution**: Run the `constitution` command to define your project's non-negotiable principles.
+2. **Create a constitution**: Run `/ds.constitution` to define your project's non-negotiable principles.
 
-3. **Specify a feature**: Run `specify` with a Jira issue code (e.g., `SPR-23`). It fetches the issue via MCP, asks you for the branch type (feat/fix/chore/etc.), creates a gitflow branch, and generates a structured spec from the Jira content.
+3. **Specify a feature**: Run `/ds.specify <JIRA-CODE>` (e.g., `/ds.specify SPR-23`). It fetches the Jira issue via MCP, asks you for the branch type (feat/fix/chore/etc.), creates a gitflow branch, and generates a structured spec.
 
-4. **Plan the implementation**: Run `plan` to generate architecture decisions, data models, and interface contracts based on the spec.
+4. **Clarify** (optional): Run `/ds.clarify` to identify and resolve ambiguities before planning.
 
-5. **Generate tasks**: Run `tasks` to break the plan into an ordered, dependency-aware task list organized by user story.
+5. **Plan the implementation**: Run `/ds.plan` to generate architecture decisions, data models, and interface contracts.
 
-6. **Implement**: Run `implement` to execute tasks phase by phase, with progress tracking and validation.
+6. **Generate tasks**: Run `/ds.tasks` to break the plan into an ordered, dependency-aware task list.
+
+7. **Implement**: Run `/ds.implement` to execute tasks phase by phase.
 
 ## Document Flow
 

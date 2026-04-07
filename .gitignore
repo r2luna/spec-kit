@@ -1,31 +1,3 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual environments
-venv/
-ENV/
-env/
-.venv
-
 # IDE
 .vscode/
 .idea/
@@ -34,19 +6,7 @@ env/
 .DS_Store
 *.tmp
 
-# Project specific
-*.log
+# Environment
 .env
 .env.local
-*.lock
-
-# Spec Kit-specific files
-.genreleases/
-*.zip
-sdd-*/
-docs/dev
-
-# Extension system
-.specify/extensions/.cache/
-.specify/extensions/.backup/
-.specify/extensions/*/local-config.yml
+*.log

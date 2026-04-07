@@ -211,7 +211,7 @@ clean_branch_name() {
     echo "$name" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//' | sed 's/-$//'
 }
 
-# Resolve repository root using common.sh functions which prioritize .specify over git
+# Resolve repository root using common.sh functions which prioritize .ds over git
 SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 

@@ -96,7 +96,7 @@ IFLOW_FILE="$REPO_ROOT/IFLOW.md"
 FORGE_FILE="$AGENTS_FILE"
 
 # Template file
-TEMPLATE_FILE="$REPO_ROOT/.specify/templates/agent-file-template.md"
+TEMPLATE_FILE="$REPO_ROOT/.ds/templates/agent-file-template.md"
 
 # Global variables for parsed plan data
 NEW_LANG=""
