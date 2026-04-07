@@ -1,6 +1,6 @@
 ---
-description: Create or update the feature specification from a natural language feature description.
-handoffs: 
+description: Create or update the feature specification from a Jira issue, pulling all context via MCP and creating a gitflow-compliant branch.
+handoffs:
   - label: Build Technical Plan
     agent: speckit.plan
     prompt: Create a plan for the spec. I am building with...
@@ -10,7 +10,6 @@ handoffs:
     send: true
 scripts:
   sh: scripts/bash/create-new-feature.sh "{ARGS}"
-  ps: scripts/powershell/create-new-feature.ps1 "{ARGS}"
 ---
 
 ## User Input
@@ -21,87 +20,60 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
-## Pre-Execution Checks
-
-**Check for extension hooks (before specification)**:
-- Check if `.specify/extensions.yml` exists in the project root.
-- If it exists, read it and look for entries under the `hooks.before_specify` key
-- If the YAML cannot be parsed or is invalid, skip hook checking silently and continue normally
-- Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
-- For each remaining hook, do **not** attempt to interpret or evaluate hook `condition` expressions:
-  - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
-  - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
-- For each executable hook, output the following based on its `optional` flag:
-  - **Optional hook** (`optional: true`):
-    ```
-    ## Extension Hooks
-
-    **Optional Pre-Hook**: {extension}
-    Command: `/{command}`
-    Description: {description}
-
-    Prompt: {prompt}
-    To execute: `/{command}`
-    ```
-  - **Mandatory hook** (`optional: false`):
-    ```
-    ## Extension Hooks
-
-    **Automatic Pre-Hook**: {extension}
-    Executing: `/{command}`
-    EXECUTE_COMMAND: {command}
-
-    Wait for the result of the hook command before proceeding to the Outline.
-    ```
-- If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently
-
 ## Outline
 
-The text the user typed after `/speckit.specify` in the triggering message **is** the feature description. Assume you always have it available in this conversation even if `{ARGS}` appears literally below. Do not ask the user to repeat it unless they provided an empty command.
+The user provides a **Jira issue code** (e.g., `SPR-23`, `PROJ-142`). This is the primary input. If the user also provides additional context or description, use it to supplement the Jira content.
 
-Given that feature description, do this:
+Given the Jira issue code, do this:
 
-1. **Generate a concise short name** (2-4 words) for the branch:
-   - Analyze the feature description and extract the most meaningful keywords
-   - Create a 2-4 word short name that captures the essence of the feature
-   - Use action-noun format when possible (e.g., "add-user-auth", "fix-payment-bug")
-   - Preserve technical terms and acronyms (OAuth2, API, JWT, etc.)
-   - Keep it concise but descriptive enough to understand the feature at a glance
-   - Examples:
-     - "I want to add user authentication" → "user-auth"
-     - "Implement OAuth2 integration for the API" → "oauth2-api-integration"
-     - "Create a dashboard for analytics" → "analytics-dashboard"
-     - "Fix payment processing timeout bug" → "fix-payment-timeout"
+1. **Fetch the Jira issue via MCP**: Use the Notion search tool (which has Jira connected as a source) to look up the issue by its code. Extract:
+   - Issue title / summary
+   - Issue type (Story, Bug, Task, Sub-task, Epic, etc.)
+   - Description and acceptance criteria
+   - Priority, labels, components
+   - Linked issues and dependencies
+   - Any attachments or comments with relevant context
+   - Sprint or milestone information
 
-2. **Create the feature branch** by running the script with `--short-name` (and `--json`). In sequential mode, do NOT pass `--number` — the script auto-detects the next available number. In timestamp mode, the script generates a `YYYYMMDD-HHMMSS` prefix automatically:
+   If the issue cannot be found, ask the user to verify the code and try again.
 
-   **Branch numbering mode**: Before running the script, check if `.specify/init-options.json` exists and read the `branch_numbering` value.
-   - If `"timestamp"`, add `--timestamp` (Bash) or `-Timestamp` (PowerShell) to the script invocation
-   - If `"sequential"` or absent, do not add any extra flag (default behavior)
+2. **Ask the user for the branch type**: Present the gitflow branch types and ask which one applies to this work:
 
-   - Bash example: `{SCRIPT} --json --short-name "user-auth" "Add user authentication"`
-   - Bash (timestamp): `{SCRIPT} --json --timestamp --short-name "user-auth" "Add user authentication"`
-   - PowerShell example: `{SCRIPT} -Json -ShortName "user-auth" "Add user authentication"`
-   - PowerShell (timestamp): `{SCRIPT} -Json -Timestamp -ShortName "user-auth" "Add user authentication"`
+   | Type | Branch prefix | Use when |
+   |------|--------------|----------|
+   | Feature | `feat/` | New functionality or user story |
+   | Fix | `fix/` | Bug fix |
+   | Chore | `chore/` | Maintenance, dependency updates, config changes |
+   | Refactor | `refactor/` | Code restructuring without behavior change |
+   | Docs | `docs/` | Documentation only |
+   | Hotfix | `hotfix/` | Urgent production fix |
+
+   **Auto-suggest based on Jira issue type**: If the Jira issue type is "Story" or "Epic", suggest `feat/`. If "Bug", suggest `fix/`. Otherwise suggest based on best match. The user always has final say.
+
+   The branch name will be: `{type}/{JIRA_CODE}` (e.g., `feat/SPR-23`, `fix/PROJ-142`).
+
+3. **Create the feature branch** by running the script with `--branch-name` and `--json`:
+
+   ```bash
+   {SCRIPT} --json --branch-name "{type}/{JIRA_CODE}" "{Jira issue title}"
+   ```
 
    **IMPORTANT**:
-   - Do NOT pass `--number` — the script determines the correct next number automatically
-   - Always include the JSON flag (`--json` for Bash, `-Json` for PowerShell) so the output can be parsed reliably
+   - Always include the JSON flag (`--json`) so the output can be parsed reliably
    - You must only ever run this script once per feature
-   - The JSON is provided in the terminal as output - always refer to it to get the actual content you're looking for
    - The JSON output will contain BRANCH_NAME and SPEC_FILE paths
-   - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot")
+   - The `--branch-name` flag passes the full gitflow branch name (e.g., `feat/SPR-23`)
 
-3. Load `templates/spec-template.md` to understand required sections.
+4. Load `templates/spec-template.md` to understand required sections.
 
-4. Follow this execution flow:
+5. Follow this execution flow, using the **Jira issue content** as the primary source:
 
-    1. Parse user description from Input
-       If empty: ERROR "No feature description provided"
-    2. Extract key concepts from description
-       Identify: actors, actions, data, constraints
+    1. Parse Jira issue content
+       If the issue has no description: use the title and any acceptance criteria or comments as the base
+    2. Extract key concepts from the Jira issue
+       Identify: actors, actions, data, constraints, acceptance criteria
     3. For unclear aspects:
-       - Make informed guesses based on context and industry standards
+       - Make informed guesses based on Jira context and industry standards
        - Only mark with [NEEDS CLARIFICATION: specific question] if:
          - The choice significantly impacts feature scope or user experience
          - Multiple reasonable interpretations exist with different implications
@@ -109,9 +81,11 @@ Given that feature description, do this:
        - **LIMIT: Maximum 3 [NEEDS CLARIFICATION] markers total**
        - Prioritize clarifications by impact: scope > security/privacy > user experience > technical details
     4. Fill User Scenarios & Testing section
-       If no clear user flow: ERROR "Cannot determine user scenarios"
+       Map Jira acceptance criteria to user scenarios where available
+       If no clear user flow: ERROR "Cannot determine user scenarios from Jira issue"
     5. Generate Functional Requirements
        Each requirement must be testable
+       Use Jira acceptance criteria as the foundation
        Use reasonable defaults for unspecified details (document assumptions in Assumptions section)
     6. Define Success Criteria
        Create measurable, technology-agnostic outcomes
@@ -120,62 +94,48 @@ Given that feature description, do this:
     7. Identify Key Entities (if data involved)
     8. Return: SUCCESS (spec ready for planning)
 
-5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
+6. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the Jira issue while preserving section order and headings.
 
-6. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
+   **Include Jira traceability**: Add a `## Jira Source` section at the top of the spec with:
+   - Jira issue code and title
+   - Issue type and priority
+   - Link to the original Jira issue (if URL is available)
+   - Date the spec was generated
 
-   a. **Create Spec Quality Checklist**: Generate a checklist file at `FEATURE_DIR/checklists/requirements.md` using the checklist template structure with these validation items:
+7. **Specification Quality Validation**: After writing the initial spec, validate against quality criteria:
 
-      ```markdown
-      # Specification Quality Checklist: [FEATURE NAME]
-      
-      **Purpose**: Validate specification completeness and quality before proceeding to planning
-      **Created**: [DATE]
-      **Feature**: [Link to spec.md]
-      
-      ## Content Quality
-      
-      - [ ] No implementation details (languages, frameworks, APIs)
-      - [ ] Focused on user value and business needs
-      - [ ] Written for non-technical stakeholders
-      - [ ] All mandatory sections completed
-      
-      ## Requirement Completeness
-      
-      - [ ] No [NEEDS CLARIFICATION] markers remain
-      - [ ] Requirements are testable and unambiguous
-      - [ ] Success criteria are measurable
-      - [ ] Success criteria are technology-agnostic (no implementation details)
-      - [ ] All acceptance scenarios are defined
-      - [ ] Edge cases are identified
-      - [ ] Scope is clearly bounded
-      - [ ] Dependencies and assumptions identified
-      
-      ## Feature Readiness
-      
-      - [ ] All functional requirements have clear acceptance criteria
-      - [ ] User scenarios cover primary flows
-      - [ ] Feature meets measurable outcomes defined in Success Criteria
-      - [ ] No implementation details leak into specification
-      
-      ## Notes
-      
-      - Items marked incomplete require spec updates before `/speckit.clarify` or `/speckit.plan`
-      ```
+   a. **Run Validation Check**: Review the spec against these quality criteria:
 
-   b. **Run Validation Check**: Review the spec against each checklist item:
-      - For each item, determine if it passes or fails
-      - Document specific issues found (quote relevant spec sections)
+      **Content Quality**:
+      - No implementation details (languages, frameworks, APIs)
+      - Focused on user value and business needs
+      - Written for non-technical stakeholders
+      - All mandatory sections completed
 
-   c. **Handle Validation Results**:
+      **Requirement Completeness**:
+      - Requirements are testable and unambiguous
+      - Success criteria are measurable
+      - Success criteria are technology-agnostic (no implementation details)
+      - All acceptance scenarios are defined
+      - Edge cases are identified
+      - Scope is clearly bounded
+      - Dependencies and assumptions identified
 
-      - **If all items pass**: Mark checklist complete and proceed to step 7
+      **Feature Readiness**:
+      - All functional requirements have clear acceptance criteria
+      - User scenarios cover primary flows
+      - Feature meets measurable outcomes defined in Success Criteria
+      - No implementation details leak into specification
+
+   b. **Handle Validation Results**:
+
+      - **If all items pass**: Proceed to step 8
 
       - **If items fail (excluding [NEEDS CLARIFICATION])**:
         1. List the failing items and specific issues
         2. Update the spec to address each issue
         3. Re-run validation until all items pass (max 3 iterations)
-        4. If still failing after 3 iterations, document remaining issues in checklist notes and warn user
+        4. If still failing after 3 iterations, document remaining issues and warn user
 
       - **If [NEEDS CLARIFICATION] markers remain**:
         1. Extract all [NEEDS CLARIFICATION: ...] markers from the spec
@@ -184,20 +144,20 @@ Given that feature description, do this:
 
            ```markdown
            ## Question [N]: [Topic]
-           
+
            **Context**: [Quote relevant spec section]
-           
+
            **What we need to know**: [Specific question from NEEDS CLARIFICATION marker]
-           
+
            **Suggested Answers**:
-           
+
            | Option | Answer | Implications |
            |--------|--------|--------------|
            | A      | [First suggested answer] | [What this means for the feature] |
            | B      | [Second suggested answer] | [What this means for the feature] |
            | C      | [Third suggested answer] | [What this means for the feature] |
            | Custom | Provide your own answer | [Explain how to provide custom input] |
-           
+
            **Your choice**: _[Wait for user response]_
            ```
 
@@ -212,38 +172,12 @@ Given that feature description, do this:
         8. Update the spec by replacing each [NEEDS CLARIFICATION] marker with the user's selected or provided answer
         9. Re-run validation after all clarifications are resolved
 
-   d. **Update Checklist**: After each validation iteration, update the checklist file with current pass/fail status
-
-7. Report completion with branch name, spec file path, checklist results, and readiness for the next phase (`/speckit.clarify` or `/speckit.plan`).
-
-8. **Check for extension hooks**: After reporting completion, check if `.specify/extensions.yml` exists in the project root.
-   - If it exists, read it and look for entries under the `hooks.after_specify` key
-   - If the YAML cannot be parsed or is invalid, skip hook checking silently and continue normally
-   - Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
-   - For each remaining hook, do **not** attempt to interpret or evaluate hook `condition` expressions:
-     - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
-     - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
-   - For each executable hook, output the following based on its `optional` flag:
-     - **Optional hook** (`optional: true`):
-       ```
-       ## Extension Hooks
-
-       **Optional Hook**: {extension}
-       Command: `/{command}`
-       Description: {description}
-
-       Prompt: {prompt}
-       To execute: `/{command}`
-       ```
-     - **Mandatory hook** (`optional: false`):
-       ```
-       ## Extension Hooks
-
-       **Automatic Hook**: {extension}
-       Executing: `/{command}`
-       EXECUTE_COMMAND: {command}
-       ```
-   - If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently
+8. Report completion with:
+   - Jira issue code and title
+   - Branch name (gitflow format)
+   - Spec file path
+   - Validation results
+   - Readiness for the next phase (`/speckit.clarify` or `/speckit.plan`)
 
 **NOTE:** The script creates and checks out the new branch and initializes the spec file before writing.
 
@@ -252,7 +186,8 @@ Given that feature description, do this:
 - Focus on **WHAT** users need and **WHY**.
 - Avoid HOW to implement (no tech stack, APIs, code structure).
 - Written for business stakeholders, not developers.
-- DO NOT create any checklists that are embedded in the spec. That will be a separate command.
+- DO NOT create any checklists that are embedded in the spec.
+- The Jira issue is the **source of truth** — the spec enriches and structures its content, not replaces it.
 
 ### Section Requirements
 
@@ -262,17 +197,18 @@ Given that feature description, do this:
 
 ### For AI Generation
 
-When creating this spec from a user prompt:
+When creating this spec from a Jira issue:
 
-1. **Make informed guesses**: Use context, industry standards, and common patterns to fill gaps
-2. **Document assumptions**: Record reasonable defaults in the Assumptions section
-3. **Limit clarifications**: Maximum 3 [NEEDS CLARIFICATION] markers - use only for critical decisions that:
+1. **Use Jira content as the foundation**: Acceptance criteria, description, and comments are the primary source
+2. **Make informed guesses**: Use context, industry standards, and common patterns to fill gaps
+3. **Document assumptions**: Record reasonable defaults in the Assumptions section
+4. **Limit clarifications**: Maximum 3 [NEEDS CLARIFICATION] markers - use only for critical decisions that:
    - Significantly impact feature scope or user experience
    - Have multiple reasonable interpretations with different implications
    - Lack any reasonable default
-4. **Prioritize clarifications**: scope > security/privacy > user experience > technical details
-5. **Think like a tester**: Every vague requirement should fail the "testable and unambiguous" checklist item
-6. **Common areas needing clarification** (only if no reasonable default exists):
+5. **Prioritize clarifications**: scope > security/privacy > user experience > technical details
+6. **Think like a tester**: Every vague requirement should fail the "testable and unambiguous" checklist item
+7. **Common areas needing clarification** (only if no reasonable default exists):
    - Feature scope and boundaries (include/exclude specific use cases)
    - User types and permissions (if multiple conflicting interpretations possible)
    - Security/compliance requirements (when legally/financially significant)
