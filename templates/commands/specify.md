@@ -28,9 +28,18 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
+## Project Configuration
+
+Before interpreting the user input, check for a default Jira project key:
+
+1. Read `.ds/config.json` (relative to repo root). If it exists and contains `jira.project_key`, store that as the **default project key**.
+2. **Expand bare numbers**: If the user input is a bare number (e.g., `23`, `142`), prepend the default project key to form the full Jira code (e.g., `SPR-23`).
+3. **Full codes pass through**: If the user input already contains a hyphen and letters (e.g., `SPR-23`, `PROJ-142`), use it as-is — the explicit code always wins, even if it differs from the default project.
+4. **No config + bare number**: If `.ds/config.json` does not exist or has no `jira.project_key`, and the user provides only a bare number, ask the user for the full Jira issue code before proceeding.
+
 ## Outline
 
-The user provides a **Jira issue code** (e.g., `SPR-23`, `PROJ-142`). This is the primary input. If the user also provides additional context or description, use it to supplement the Jira content.
+The user provides a **Jira issue code** (e.g., `SPR-23`, `PROJ-142`) or a **bare issue number** (e.g., `23`) when a default project is configured. This is the primary input. If the user also provides additional context or description, use it to supplement the Jira content.
 
 Given the Jira issue code, do this:
 
@@ -105,7 +114,8 @@ Given the Jira issue code, do this:
 6. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the Jira issue while preserving section order and headings.
 
    **Include Jira traceability**: Add a `## Jira Source` section at the top of the spec with:
-   - Jira issue code and title
+   - Jira issue code and title (use the fully expanded code, e.g., `SPR-23`)
+   - Project key (from config or as provided)
    - Issue type and priority
    - Link to the original Jira issue (if URL is available)
    - Date the spec was generated

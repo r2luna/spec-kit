@@ -97,11 +97,30 @@ if [ "$IS_LARAVEL" = true ] && [ "$HAS_BOOST" = false ]; then
     exit 1
 fi
 
+# Prompt for Jira project key
+JIRA_KEY=""
+if [ -t 0 ]; then
+    printf "[ds] Jira project key (e.g., SPR, PROJ) — leave blank to skip: "
+    read -r JIRA_KEY_RAW
+    if [ -n "$JIRA_KEY_RAW" ]; then
+        JIRA_KEY=$(echo "$JIRA_KEY_RAW" | tr '[:lower:]' '[:upper:]')
+    fi
+fi
+
 # Create directory structure
 mkdir -p "$DS_DIR/templates"
 mkdir -p "$DS_DIR/scripts/bash"
 mkdir -p "$DS_DIR/memory"
 mkdir -p "$TARGET_DIR/specs"
+
+# Write Jira config if project key was provided
+if [ -n "$JIRA_KEY" ]; then
+    if command -v jq >/dev/null 2>&1; then
+        jq -cn --arg key "$JIRA_KEY" '{"jira":{"project_key":$key}}' > "$DS_DIR/config.json"
+    else
+        printf '{\n  "jira": {\n    "project_key": "%s"\n  }\n}\n' "$JIRA_KEY" > "$DS_DIR/config.json"
+    fi
+fi
 
 # Copy document templates
 cp "$SOURCE_ROOT/templates/"*.md "$DS_DIR/templates/"
@@ -163,10 +182,11 @@ if $JSON_MODE; then
             --arg commands "$COMMANDS_COUNT" \
             --arg skills "$SKILLS_COUNT" \
             --arg scripts "$SCRIPTS_COUNT" \
-            '{TARGET:$target,DS_DIR:$ds_dir,IS_LARAVEL:$is_laravel,TEMPLATES:($templates|tonumber),COMMANDS:($commands|tonumber),SKILLS:($skills|tonumber),SCRIPTS:($scripts|tonumber)}'
+            --arg jira_key "$JIRA_KEY" \
+            '{TARGET:$target,DS_DIR:$ds_dir,IS_LARAVEL:$is_laravel,TEMPLATES:($templates|tonumber),COMMANDS:($commands|tonumber),SKILLS:($skills|tonumber),SCRIPTS:($scripts|tonumber),JIRA_KEY:$jira_key}'
     else
-        printf '{"TARGET":"%s","DS_DIR":"%s","IS_LARAVEL":%s,"TEMPLATES":%s,"COMMANDS":%s,"SKILLS":%s,"SCRIPTS":%s}\n' \
-            "$TARGET_DIR" "$DS_DIR" "$IS_LARAVEL" "$TEMPLATES_COUNT" "$COMMANDS_COUNT" "$SKILLS_COUNT" "$SCRIPTS_COUNT"
+        printf '{"TARGET":"%s","DS_DIR":"%s","IS_LARAVEL":%s,"TEMPLATES":%s,"COMMANDS":%s,"SKILLS":%s,"SCRIPTS":%s,"JIRA_KEY":"%s"}\n' \
+            "$TARGET_DIR" "$DS_DIR" "$IS_LARAVEL" "$TEMPLATES_COUNT" "$COMMANDS_COUNT" "$SKILLS_COUNT" "$SCRIPTS_COUNT" "$JIRA_KEY"
     fi
 else
     echo ""
@@ -177,6 +197,7 @@ else
         echo "  .ds/templates/          $TEMPLATES_COUNT document templates"
         echo "  .ds/scripts/bash/       $SCRIPTS_COUNT scripts"
         echo "  .ds/memory/             constitution.md (ready to configure)"
+        [ -n "$JIRA_KEY" ] && echo "  .ds/config.json         Jira project: $JIRA_KEY"
         echo "  specs/                  feature specs directory"
         echo ""
         echo "Next steps:"
@@ -190,6 +211,7 @@ else
         echo "  .ds/templates/commands/ $COMMANDS_COUNT command templates"
         echo "  .ds/scripts/bash/       $SCRIPTS_COUNT scripts"
         echo "  .ds/memory/             constitution.md (ready to configure)"
+        [ -n "$JIRA_KEY" ] && echo "  .ds/config.json         Jira project: $JIRA_KEY"
         echo "  specs/                  feature specs directory"
         echo ""
         echo "Next steps:"

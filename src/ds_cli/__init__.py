@@ -127,11 +127,25 @@ def cmd_init(target: str | None = None) -> None:
         print("[ds] Then run 'ds init' again.", file=sys.stderr)
         sys.exit(1)
 
+    # Prompt for Jira project key
+    jira_key = ""
+    try:
+        raw = input("[ds] Jira project key (e.g., SPR, PROJ) — leave blank to skip: ").strip()
+        if raw:
+            jira_key = raw.upper()
+    except (EOFError, KeyboardInterrupt):
+        pass
+
     # Create .ds/ structure (templates, scripts, memory)
     (ds_dir / "templates").mkdir(parents=True)
     (ds_dir / "scripts" / "bash").mkdir(parents=True)
     (ds_dir / "memory").mkdir(parents=True)
     (target_dir / "specs").mkdir(exist_ok=True)
+
+    # Write Jira config if project key was provided
+    if jira_key:
+        config = {"jira": {"project_key": jira_key}}
+        (ds_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n")
 
     # Copy document templates
     templates_src = pack / "templates"
@@ -166,6 +180,8 @@ def cmd_init(target: str | None = None) -> None:
         print(f"  .ds/templates/          {len(templates)} document templates")
         print(f"  .ds/scripts/bash/       {len(scripts)} scripts")
         print(f"  .ds/memory/             constitution.md (ready to configure)")
+        if jira_key:
+            print(f"  .ds/config.json         Jira project: {jira_key}")
         print(f"  specs/                  feature specs directory")
         print()
         print("Next steps:")
@@ -188,6 +204,8 @@ def cmd_init(target: str | None = None) -> None:
         print(f"  .ds/templates/commands/ {commands_count} command templates")
         print(f"  .ds/scripts/bash/       {len(scripts)} scripts")
         print(f"  .ds/memory/             constitution.md (ready to configure)")
+        if jira_key:
+            print(f"  .ds/config.json         Jira project: {jira_key}")
         print(f"  specs/                  feature specs directory")
         print()
         print("Next steps:")

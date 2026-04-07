@@ -42,7 +42,9 @@ The init script automatically detects Laravel projects:
 
 ### Execution
 
-1. **Run the init script**: Execute `{SCRIPT}` from the repo root and parse JSON output for TARGET, DS_DIR, IS_LARAVEL, and counts.
+1. **Run the init script**: Execute `{SCRIPT}` from the repo root and parse JSON output for TARGET, DS_DIR, IS_LARAVEL, JIRA_KEY, and counts.
+
+   The script will interactively prompt for a **Jira project key** (e.g., `SPR`, `PROJ`). If provided, it writes `.ds/config.json` with the key so that `/ds.specify` can expand bare issue numbers (e.g., `/ds.specify 23` → `SPR-23`). The user can skip this by pressing Enter.
 
    **IMPORTANT**: This script should only run once per project. If `.ds/` already exists, it will error — inform the user and suggest checking the existing setup.
 
@@ -53,6 +55,7 @@ The init script automatically detects Laravel projects:
    - `.ds/templates/` — document templates (spec, plan, tasks, constitution, checklist, agent-file)
    - `.ds/scripts/bash/` — shell scripts for branch creation, prerequisites, plan setup
    - `.ds/memory/constitution.md` — project constitution (copied from template, ready to fill)
+   - `.ds/config.json` — Jira project configuration (if a project key was provided)
    - `specs/` — directory where feature specs will live
 
    **For non-Laravel projects:**
@@ -60,9 +63,10 @@ The init script automatically detects Laravel projects:
    - `.ds/templates/` — document templates
    - `.ds/scripts/bash/` — shell scripts
    - `.ds/memory/constitution.md` — project constitution
+   - `.ds/config.json` — Jira project configuration (if a project key was provided)
    - `specs/` — directory where feature specs will live
 
 3. **Suggest next steps**:
    - For Laravel: run `php artisan boost:update` to register the new skills
    - Run `/ds.constitution` to define the project's non-negotiable principles
-   - Then use `/ds.specify <JIRA-CODE>` to create the first feature spec from a Jira issue
+   - Then use `/ds.specify <JIRA-CODE>` (or just `/ds.specify <number>` if a Jira project key was configured) to create the first feature spec from a Jira issue
