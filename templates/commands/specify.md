@@ -36,6 +36,11 @@ Before interpreting the user input, check for a default Jira project key:
 2. **Expand bare numbers**: If the user input is a bare number (e.g., `23`, `142`), prepend the default project key to form the full Jira code (e.g., `SPR-23`).
 3. **Full codes pass through**: If the user input already contains a hyphen and letters (e.g., `SPR-23`, `PROJ-142`), use it as-is — the explicit code always wins, even if it differs from the default project.
 4. **No config + bare number**: If `.ds/config.json` does not exist or has no `jira.project_key`, and the user provides only a bare number, ask the user for the full Jira issue code before proceeding.
+5. **First-run setup**: If `.ds/config.json` does not exist (regardless of whether the user provided a full code or bare number), extract the project key from the resolved Jira code (e.g., `SPR` from `SPR-23`) and write it to `.ds/config.json`:
+   ```json
+   { "jira": { "project_key": "SPR" } }
+   ```
+   Inform the user: _"Saved default Jira project **SPR** to `.ds/config.json` — next time you can just use `/ds.specify 23`."_
 
 ## Outline
 
