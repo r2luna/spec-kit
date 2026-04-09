@@ -19,6 +19,7 @@ packages = ["src/ds_cli"]
 "templates/agent-file-template.md" = "ds_cli/pack/templates/agent-file-template.md"
 "templates/checklist-template.md" = "ds_cli/pack/templates/checklist-template.md"
 "templates/constitution-template.md" = "ds_cli/pack/templates/constitution-template.md"
+"templates/constitution-laravel.md" = "ds_cli/pack/templates/constitution-laravel.md"
 "templates/plan-template.md" = "ds_cli/pack/templates/plan-template.md"
 "templates/spec-template.md" = "ds_cli/pack/templates/spec-template.md"
 "templates/tasks-template.md" = "ds_cli/pack/templates/tasks-template.md"

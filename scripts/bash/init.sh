@@ -149,7 +149,37 @@ cp "$SOURCE_ROOT/scripts/bash/"*.sh "$DS_DIR/scripts/bash/"
 chmod +x "$DS_DIR/scripts/bash/"*.sh
 
 # Copy constitution template to memory as starting point
-cp "$DS_DIR/templates/constitution-template.md" "$DS_DIR/memory/constitution.md"
+if [ "$IS_LARAVEL" = true ] && [ -f "$DS_DIR/templates/constitution-laravel.md" ]; then
+    # Detect optional packages for conditional sections
+    HAS_BRAIN=false
+    HAS_FLUX=false
+    if grep -q '"r2luna/brain"' "$TARGET_DIR/composer.json" 2>/dev/null; then
+        HAS_BRAIN=true
+    fi
+    if grep -q '"livewire/flux"' "$TARGET_DIR/composer.json" 2>/dev/null; then
+        HAS_FLUX=true
+    fi
+
+    # Process conditional template
+    CONSTITUTION="$DS_DIR/memory/constitution.md"
+    cp "$DS_DIR/templates/constitution-laravel.md" "$CONSTITUTION"
+
+    if [ "$HAS_BRAIN" = false ]; then
+        # Remove brain conditional blocks (markers + content between them)
+        sed -i '' '/<!-- \[CONDITIONAL:brain\] -->/,/<!-- \[\/CONDITIONAL:brain\] -->/d' "$CONSTITUTION"
+    else
+        # Keep content, remove markers only
+        sed -i '' '/<!-- \[CONDITIONAL:brain\] -->/d; /<!-- \[\/CONDITIONAL:brain\] -->/d' "$CONSTITUTION"
+    fi
+
+    if [ "$HAS_FLUX" = false ]; then
+        sed -i '' '/<!-- \[CONDITIONAL:flux\] -->/,/<!-- \[\/CONDITIONAL:flux\] -->/d' "$CONSTITUTION"
+    else
+        sed -i '' '/<!-- \[CONDITIONAL:flux\] -->/d; /<!-- \[\/CONDITIONAL:flux\] -->/d' "$CONSTITUTION"
+    fi
+else
+    cp "$DS_DIR/templates/constitution-template.md" "$DS_DIR/memory/constitution.md"
+fi
 
 # Install command templates based on project type
 SKILLS_COUNT=0

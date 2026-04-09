@@ -45,6 +45,38 @@ def check_laravel_boost(target_dir: Path) -> bool:
         return False
 
 
+def get_composer_deps(target_dir: Path) -> set[str]:
+    """Return a set of all composer dependency names."""
+    composer_json = target_dir / "composer.json"
+    try:
+        data = json.loads(composer_json.read_text())
+        deps = {**data.get("require", {}), **data.get("require-dev", {})}
+        return set(deps.keys())
+    except (json.JSONDecodeError, KeyError):
+        return set()
+
+
+def process_conditional_template(content: str, flags: dict[str, bool]) -> str:
+    """Process conditional sections in a template.
+
+    Removes or keeps blocks wrapped in <!-- [CONDITIONAL:key] --> markers
+    based on the flags dict. Removes the marker comments themselves.
+    """
+    for key, enabled in flags.items():
+        pattern = re.compile(
+            rf"<!-- \[CONDITIONAL:{key}\] -->[ \t]*\n"
+            rf"(.*?)"
+            rf"<!-- \[/CONDITIONAL:{key}\] -->[ \t]*\n",
+            re.DOTALL,
+        )
+        if enabled:
+            content = pattern.sub(r"\1", content)
+        else:
+            content = pattern.sub("", content)
+
+    return content
+
+
 def command_to_skill(command_file: Path, skill_name: str) -> str:
     """Convert a command template to a Boost SKILL.md format.
 
@@ -177,9 +209,25 @@ def cmd_init(target: str | None = None) -> None:
         dest.chmod(0o755)
 
     # Copy constitution template to memory as starting point
-    constitution_tmpl = ds_dir / "templates" / "constitution-template.md"
-    if constitution_tmpl.exists():
-        shutil.copy2(constitution_tmpl, ds_dir / "memory" / "constitution.md")
+    if is_laravel:
+        laravel_tmpl = ds_dir / "templates" / "constitution-laravel.md"
+        if laravel_tmpl.exists():
+            deps = get_composer_deps(target_dir)
+            flags = {
+                "brain": "r2luna/brain" in deps,
+                "flux": "livewire/flux" in deps,
+            }
+            content = process_conditional_template(laravel_tmpl.read_text(), flags)
+            (ds_dir / "memory" / "constitution.md").write_text(content)
+        else:
+            shutil.copy2(
+                ds_dir / "templates" / "constitution-template.md",
+                ds_dir / "memory" / "constitution.md",
+            )
+    else:
+        constitution_tmpl = ds_dir / "templates" / "constitution-template.md"
+        if constitution_tmpl.exists():
+            shutil.copy2(constitution_tmpl, ds_dir / "memory" / "constitution.md")
 
     # Count what was installed
     templates = list((ds_dir / "templates").glob("*.md"))
