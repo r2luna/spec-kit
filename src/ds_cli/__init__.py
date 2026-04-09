@@ -172,22 +172,6 @@ def cmd_init(target: str | None = None) -> None:
     if is_laravel:
         # Install as Laravel Boost skills in .ai/skills/
         skills_count = install_boost_skills(target_dir, pack)
-
-        print()
-        print(f"[ds] Initialized DevSquad SDD in {target_dir} (Laravel + Boost)")
-        print()
-        print(f"  .ai/skills/ds-*/        {skills_count} skills (Laravel Boost format)")
-        print(f"  .ds/templates/          {len(templates)} document templates")
-        print(f"  .ds/scripts/bash/       {len(scripts)} scripts")
-        print(f"  .ds/memory/             constitution.md (ready to configure)")
-        if jira_key:
-            print(f"  .ds/config.json         Jira project: {jira_key}")
-        print(f"  specs/                  feature specs directory")
-        print()
-        print("Next steps:")
-        print("  1. Run: php artisan boost:update")
-        print("  2. Run /ds.constitution to set up your project principles")
-        print("  3. Run /ds.specify <JIRA-CODE> to create your first feature spec")
     else:
         # Non-Laravel: install commands in .ds/templates/commands/
         (ds_dir / "templates" / "commands").mkdir(parents=True, exist_ok=True)
@@ -197,20 +181,55 @@ def cmd_init(target: str | None = None) -> None:
             shutil.copy2(f, ds_dir / "templates" / "commands" / f.name)
             commands_count += 1
 
+    # Print branded output
+    print()
+    print("  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510")
+    print("  \u2502                                                  \u2502")
+    print("  \u2502   \u00b7  DevSquad \u00b7 Spec-Driven Development  \u00b7       \u2502")
+    print("  \u2502                                                  \u2502")
+    print("  \u2502   https://devsquad.com                           \u2502")
+    print("  \u2502                                                  \u2502")
+    print("  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518")
+    print()
+
+    if is_laravel:
+        print(f"  Initialized in {target_dir}")
+        print("  Mode: Laravel + Boost")
         print()
-        print(f"[ds] Initialized DevSquad SDD in {target_dir}")
+        print("  Created:")
+        print("  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+        print(f"  .ai/skills/ds-*/        {skills_count} skills (Boost format)")
+        print(f"  .ds/templates/          {len(templates)} document templates")
+        print(f"  .ds/scripts/bash/       {len(scripts)} scripts")
+        print(f"  .ds/memory/             constitution.md")
+        if jira_key:
+            print(f"  .ds/config.json         Jira project: {jira_key}")
+        print(f"  specs/                  feature specs")
         print()
+        print("  Next steps:")
+        print("  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+        print("  1. php artisan boost:update")
+        print("  2. /ds.constitution \u2014 set up project principles")
+        print("  3. /ds.specify <JIRA-CODE> \u2014 create first spec")
+    else:
+        print(f"  Initialized in {target_dir}")
+        print()
+        print("  Created:")
+        print("  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
         print(f"  .ds/templates/          {len(templates)} document templates")
         print(f"  .ds/templates/commands/ {commands_count} command templates")
         print(f"  .ds/scripts/bash/       {len(scripts)} scripts")
-        print(f"  .ds/memory/             constitution.md (ready to configure)")
+        print(f"  .ds/memory/             constitution.md")
         if jira_key:
             print(f"  .ds/config.json         Jira project: {jira_key}")
-        print(f"  specs/                  feature specs directory")
+        print(f"  specs/                  feature specs")
         print()
-        print("Next steps:")
-        print("  1. Run /ds.constitution to set up your project principles")
-        print("  2. Run /ds.specify <JIRA-CODE> to create your first feature spec")
+        print("  Next steps:")
+        print("  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+        print("  1. /ds.constitution \u2014 set up project principles")
+        print("  2. /ds.specify <JIRA-CODE> \u2014 create first spec")
+
+    print()
 
 
 def main() -> None:
