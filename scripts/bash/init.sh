@@ -224,8 +224,8 @@ else
         echo "  Next steps:"
         echo "  ─────────────────────────────────────────────"
         echo "  1. $(printf '\033[32mphp artisan boost:update\033[0m')"
-        echo "  2. /ds.constitution — set up project principles"
-        echo "  3. /ds.specify <JIRA-CODE> — create first spec"
+        echo "  2. /ds.constitution — define project constraints and principles"
+        echo "  3. /ds.specify <JIRA-CODE> — create first feature spec"
     else
         echo "  Initialized in $TARGET_DIR"
         echo ""
@@ -240,8 +240,8 @@ else
         echo ""
         echo "  Next steps:"
         echo "  ─────────────────────────────────────────────"
-        echo "  1. /ds.constitution — set up project principles"
-        echo "  2. /ds.specify <JIRA-CODE> — create first spec"
+        echo "  1. /ds.constitution — define project constraints and principles"
+        echo "  2. /ds.specify <JIRA-CODE> — create first feature spec"
     fi
     echo ""
 fi
