@@ -223,7 +223,7 @@ else
         echo ""
         echo "  Next steps:"
         echo "  ─────────────────────────────────────────────"
-        echo "  1. php artisan boost:update"
+        echo "  1. $(printf '\033[32mphp artisan boost:update\033[0m')"
         echo "  2. /ds.constitution — set up project principles"
         echo "  3. /ds.specify <JIRA-CODE> — create first spec"
     else

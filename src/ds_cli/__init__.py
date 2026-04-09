@@ -214,7 +214,7 @@ def cmd_init(target: str | None = None) -> None:
         print()
         print("  Next steps:")
         print("  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
-        print("  1. php artisan boost:update")
+        print("  1. \033[32mphp artisan boost:update\033[0m")
         print("  2. /ds.constitution \u2014 set up project principles")
         print("  3. /ds.specify <JIRA-CODE> \u2014 create first spec")
     else:
