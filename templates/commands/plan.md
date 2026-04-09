@@ -46,7 +46,9 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Phase 1: Generate data-model.md, contracts/, quickstart.md
    - Re-evaluate Constitution Check post-design
 
-5. **Stop and report**: Command ends after Phase 2 planning. Report branch, IMPL_PLAN path, and generated artifacts.
+5. **Security review (Laravel only)**: If Laravel project detected in step 3, run the `laravel-security-audit` skill against the plan artifacts (data-model.md, contracts/, quickstart.md) to verify no planned changes introduce security vulnerabilities. Review the plan against the 70+ security rules covering XSS, auth, injection, CSRF, secrets, headers, rate limiting, and more. If CRITICAL or HIGH findings are detected, you MUST revise the plan to address them before proceeding.
+
+6. **Stop and report**: Command ends after Phase 2 planning. Report branch, IMPL_PLAN path, and generated artifacts.
 
 ## Phases
 
@@ -93,6 +95,31 @@ You **MUST** consider the user input before proceeding (if not empty).
 **Laravel projects**: Data models MUST use Eloquent conventions (fillable/guarded, casts, relationships, scopes). Contracts MUST follow Laravel's route/controller patterns (API resources, form requests, middleware). Use migrations for schema, factories and seeders for test data.
 
 **Output**: data-model.md, /contracts/*, quickstart.md
+
+### Phase 2: Security Review (Laravel only)
+
+**Prerequisites:** Phase 1 complete, Laravel project detected in step 3
+
+1. **Activate the `laravel-security-audit` skill** and review all plan artifacts against its security rules:
+   - Audit `data-model.md` for mass assignment risks (`$guarded = []`, missing `$fillable`), sensitive attributes missing `$hidden`, and insecure field types
+   - Audit `contracts/` for missing authorization middleware, unprotected routes, missing rate limiting, CSRF gaps, and API resource leaks
+   - Audit `quickstart.md` for insecure patterns in the implementation guidance
+
+2. **Cross-check planned patterns** against the Top 10 Laravel security risks:
+   - XSS: Any planned use of `{!! !!}`, `HtmlString`, or unescaped output
+   - Authorization: Every route/endpoint has middleware and policy coverage
+   - Rate limiting: Login, API, OTP, and registration endpoints are throttled
+   - Input validation: Using Form Requests with `$request->validated()`, not `$request->all()`
+   - Cryptography: No `md5()`/`sha1()` for security, proper `hash_equals()` for comparisons
+   - Mass assignment: All models define `$fillable` or `$guarded` properly
+   - IDOR: Model bindings scoped to authenticated user/tenant
+
+3. **Produce a security review summary** appended to the IMPL_PLAN:
+   - List any CRITICAL/HIGH findings with required plan revisions
+   - List MEDIUM/LOW findings as recommendations
+   - If CRITICAL or HIGH findings exist, **revise the plan artifacts** to address them before stopping
+
+**Output**: Security review summary in IMPL_PLAN, revised artifacts if needed
 
 ## Key rules
 
