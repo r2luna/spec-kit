@@ -97,10 +97,23 @@ if [ "$IS_LARAVEL" = true ] && [ "$HAS_BOOST" = false ]; then
     exit 1
 fi
 
+# Print branded header
+if ! $JSON_MODE; then
+    echo ""
+    echo "  ┌──────────────────────────────────────────────────┐"
+    echo "  │                                                  │"
+    echo "  │   ·  DevSquad · Spec-Driven Development  ·       │"
+    echo "  │                                                  │"
+    echo "  │   https://devsquad.com                           │"
+    echo "  │                                                  │"
+    echo "  └──────────────────────────────────────────────────┘"
+    echo ""
+fi
+
 # Prompt for Jira project key
 JIRA_KEY=""
 if [ -t 0 ]; then
-    printf "[ds] Jira project key (e.g., SPR, PROJ) — leave blank to skip: "
+    printf "  Jira project key (e.g., SPR, PROJ) — leave blank to skip: "
     read -r JIRA_KEY_RAW
     if [ -n "$JIRA_KEY_RAW" ]; then
         JIRA_KEY=$(echo "$JIRA_KEY_RAW" | tr '[:lower:]' '[:upper:]')
@@ -189,15 +202,6 @@ if $JSON_MODE; then
             "$TARGET_DIR" "$DS_DIR" "$IS_LARAVEL" "$TEMPLATES_COUNT" "$COMMANDS_COUNT" "$SKILLS_COUNT" "$SCRIPTS_COUNT" "$JIRA_KEY"
     fi
 else
-    echo ""
-    echo "  ┌──────────────────────────────────────────────────┐"
-    echo "  │                                                  │"
-    echo "  │   ·  DevSquad · Spec-Driven Development  ·       │"
-    echo "  │                                                  │"
-    echo "  │   https://devsquad.com                           │"
-    echo "  │                                                  │"
-    echo "  └──────────────────────────────────────────────────┘"
-    echo ""
     if [ "$IS_LARAVEL" = true ]; then
         echo "  Initialized in $TARGET_DIR"
         echo "  Mode: Laravel + Boost"

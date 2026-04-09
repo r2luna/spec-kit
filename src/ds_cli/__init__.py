@@ -127,10 +127,21 @@ def cmd_init(target: str | None = None) -> None:
         print("[ds] Then run 'ds init' again.", file=sys.stderr)
         sys.exit(1)
 
+    # Print branded header
+    print()
+    print("  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510")
+    print("  \u2502                                                  \u2502")
+    print("  \u2502   \u00b7  DevSquad \u00b7 Spec-Driven Development  \u00b7       \u2502")
+    print("  \u2502                                                  \u2502")
+    print("  \u2502   https://devsquad.com                           \u2502")
+    print("  \u2502                                                  \u2502")
+    print("  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518")
+    print()
+
     # Prompt for Jira project key
     jira_key = ""
     try:
-        raw = input("[ds] Jira project key (e.g., SPR, PROJ) — leave blank to skip: ").strip()
+        raw = input("  Jira project key (e.g., SPR, PROJ) \u2014 leave blank to skip: ").strip()
         if raw:
             jira_key = raw.upper()
     except (EOFError, KeyboardInterrupt):
@@ -180,17 +191,6 @@ def cmd_init(target: str | None = None) -> None:
         for f in commands_src.glob("*.md"):
             shutil.copy2(f, ds_dir / "templates" / "commands" / f.name)
             commands_count += 1
-
-    # Print branded output
-    print()
-    print("  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510")
-    print("  \u2502                                                  \u2502")
-    print("  \u2502   \u00b7  DevSquad \u00b7 Spec-Driven Development  \u00b7       \u2502")
-    print("  \u2502                                                  \u2502")
-    print("  \u2502   https://devsquad.com                           \u2502")
-    print("  \u2502                                                  \u2502")
-    print("  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518")
-    print()
 
     if is_laravel:
         print(f"  Initialized in {target_dir}")
