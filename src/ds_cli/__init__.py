@@ -141,9 +141,15 @@ def cmd_init(target: str | None = None) -> None:
     # Prompt for Jira project key
     jira_key = ""
     try:
-        raw = input("  Jira project key (e.g., SPR, PROJ) \u2014 leave blank to skip: ").strip()
+        print("  Configuration:")
+        print("  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+        print("  Link a Jira project so you can run")
+        print("  /ds.specify 23 instead of /ds.specify SPR-23")
+        print()
+        raw = input("  Project key (e.g., SPR, PROJ) \u2014 leave blank to skip: ").strip()
         if raw:
             jira_key = raw.upper()
+        print()
     except (EOFError, KeyboardInterrupt):
         pass
 

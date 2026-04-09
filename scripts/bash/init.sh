@@ -113,11 +113,17 @@ fi
 # Prompt for Jira project key
 JIRA_KEY=""
 if [ -t 0 ]; then
-    printf "  Jira project key (e.g., SPR, PROJ) — leave blank to skip: "
+    echo "  Configuration:"
+    echo "  ─────────────────────────────────────────────"
+    echo "  Link a Jira project so you can run"
+    echo "  /ds.specify 23 instead of /ds.specify SPR-23"
+    echo ""
+    printf "  Project key (e.g., SPR, PROJ) — leave blank to skip: "
     read -r JIRA_KEY_RAW
     if [ -n "$JIRA_KEY_RAW" ]; then
         JIRA_KEY=$(echo "$JIRA_KEY_RAW" | tr '[:lower:]' '[:upper:]')
     fi
+    echo ""
 fi
 
 # Create directory structure
